@@ -111,50 +111,57 @@ public class steppingStone
                 }
                 if (i == 0 && j > 0 && j < columnCount && IsOdd(j))
                 {
-                    tblCell.ColSpan = 2;
+                    tblCell.ColSpan = 2;                    
                     int location = ((j+1)/2);
                     tblCell.InnerText = "Warehouse " + location;
                 }
                 if(i==0 && j+1 == columnCount)
                 {
                     tblCell.InnerText = "Factory Capacity";
-                }   
-                if(i>0 && i+1<rowCount)
+                }
+                if (i > 0 && i + 1 < rowCount)
                 {
                     int factory = i;
-                    if(j==0)
+                    if (j == 0)
                     {
-                        tblCell.InnerText = "Factory " + factory;                    
+                        tblCell.InnerText = "Factory " + factory;
                     }
-                    if(j > 0 && j+1 < columnCount)
+                    if (j > 0 && j + 1 < columnCount)
                     {
-                        if(IsOdd(j))
+                        if (IsOdd(j))
                         {
-                            
+
                             tblCell.InnerText = quantity[i - 1, quantityCol].ToString();
                         }
                         else
-                        {                            
+                        {
                             tblCell.InnerText = cost[i - 1, costCol].ToString();
                         }
                     }
+                    if(j+1==columnCount)
+                    {
+                        tblCell.InnerText = getRowSum(i - 1).ToString();
+                    }
                 }
-                if(i+1==rowCount)
+                if (i + 1 == rowCount)
                 {
-                    if(j==0)
+                    if (j == 0)
                     {
                         tblCell.InnerText = "Warehouse Requirements";
                     }
                     if (j > 0 && j + 1 < columnCount && IsOdd(j))
                     {
-                        tblCell.InnerText = getColumnSum(quantityCol).ToString ();
+                        tblCell.InnerText = getColumnSum(quantityCol).ToString();
                     }
-                    if(j+1 == columnCount)
+                    if (j + 1 == columnCount)
                     {
                         tblCell.InnerText = getSum().ToString();
                     }
                 }
-                
+                if (i == 0 && IsOdd(j) && j>0 && j<columnCount)
+                {
+                    j = j + 1; //skip adding unwanted columns
+                }
                 tblRow.Cells.Add(tblCell);
             }
             tbl.Rows.Add(tblRow);
