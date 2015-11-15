@@ -105,20 +105,27 @@ public class steppingStone
                 HtmlTableCell tblCell = new HtmlTableCell();
                 int quantityCol = ((j + 1) / 2) - 1;
                 int costCol = (j / 2) - 1;
-                if(i==0 && j==0)
+
+                //header row
+                if(i==0) 
                 {
-                    tblCell.InnerText = "From/To";
+                    if (j == 0)
+                    {
+                        tblCell.InnerText = "From/To";
+                    }
+                    if (j > 0 && j < columnCount && IsOdd(j))
+                    {
+                        tblCell.ColSpan = 2;
+                        int location = ((j + 1) / 2);
+                        tblCell.InnerText = "Warehouse " + location;
+                    }
+                    if (j + 1 == columnCount)
+                    {
+                        tblCell.InnerText = "Factory Capacity";
+                    }
                 }
-                if (i == 0 && j > 0 && j < columnCount && IsOdd(j))
-                {
-                    tblCell.ColSpan = 2;                    
-                    int location = ((j+1)/2);
-                    tblCell.InnerText = "Warehouse " + location;
-                }
-                if(i==0 && j+1 == columnCount)
-                {
-                    tblCell.InnerText = "Factory Capacity";
-                }
+                
+                //data rows
                 if (i > 0 && i + 1 < rowCount)
                 {
                     int factory = i;
@@ -143,6 +150,8 @@ public class steppingStone
                         tblCell.InnerText = getRowSum(i - 1).ToString();
                     }
                 }
+
+                //footer rows
                 if (i + 1 == rowCount)
                 {
                     if (j == 0)
@@ -158,6 +167,7 @@ public class steppingStone
                         tblCell.InnerText = getSum().ToString();
                     }
                 }
+
                 if (i == 0 && IsOdd(j) && j>0 && j<columnCount)
                 {
                     j = j + 1; //skip adding unwanted columns
