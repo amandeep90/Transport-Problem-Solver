@@ -8,14 +8,23 @@
 }
 function validateInput2()
 {
-    var values = getInput2Values(".costs");
-    alert(values);
-    return false;
+    var costsValues = getInput2Values(".costs");
+    var costs = costsValues.join(", ");
+    $("#hdnCost").val(costs);
+
+    var factoriesValues = getInput2Values(".factories");
+    var factories = factoriesValues.join(", ");
+    $("#hdnFactories").val(factories);
+
+    var warehousesValues = getInput2Values(".warehouses");
+    var warehouses = warehousesValues.join(", ");
+    $("#hdnWarehouses").val(warehouses);
+     
 }
 function getInput2Values(cssClass)
 {
     var values = [];
-    $("input" + cssClass).each(function () {
+    $("input" + cssClass + "").each(function () {
         values.push($(this).val()); // this is the value of each textbox 
     })
     return values;
@@ -30,10 +39,11 @@ $(document).ready(function ()
 
 function MakeMatrixEditable()
 {
-    
-    txtBox = "<input  type='text' value='0' class='txbDigits' >"
-    $(".editable").html(txtBox);
-    AddDigitCheck(".txbDigits");
+    $(".costs").html("<input  type='text' value='0' class='editable costs' >");
+    $(".warehouses").html("<input  type='text' value='0' class='editable warehouses' >");
+    $(".factories").html("<input  type='text' value='0' class='editable factories' >");
+
+    AddDigitCheck(".editable");  
 
 }
 

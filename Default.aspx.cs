@@ -8,6 +8,7 @@ using System.Web.UI.HtmlControls;
 
 public partial class _Default : System.Web.UI.Page
 {
+    public steppingStone ss;
     protected void Page_Load(object sender, EventArgs e)
     {
         if(IsPostBack)
@@ -28,7 +29,31 @@ public partial class _Default : System.Web.UI.Page
         int matrixRows, matrixColumns = 0;
         matrixRows = Convert.ToInt32(txbFactories.Text.ToString());
         matrixColumns = Convert.ToInt32(txbWarehouses.Text.ToString());
-        steppingStone ss = new steppingStone(matrixRows, matrixColumns);
+        int[,] cost = new int[matrixRows, matrixColumns];
+        int[] warehouses = new int[matrixColumns];
+        int[] factories = new int[matrixRows];
+        if(!string.IsNullOrEmpty(hdnCost.Value.ToString() ))
+        {   
+            //we have user input for matrix pushed into hdn fields  
+            int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
+            int intCostCounter = 0;
+            for (int i = 0; i < matrixRows; i++)
+            {
+                for (int j = 0; j < matrixColumns; j++)
+                {
+                    cost[i, j] = intCost[intCostCounter];
+                    intCostCounter = intCostCounter + 1;
+                }
+            }
+            warehouses = Array.ConvertAll(hdnWarehouses.Value.ToString().Split(','), int.Parse);
+            factories = Array.ConvertAll( hdnFactories.Value.ToString().Split(','), int.Parse);
+            ss = new steppingStone(matrixRows, matrixColumns, true, factories, warehouses, cost);
+        }
+        else
+        {
+            ss = new steppingStone(matrixRows, matrixColumns, false, factories, warehouses, cost);
+        }
+        
         outputDiv1.Controls.AddAt(0, ss.displayMatrix);
                
     }
@@ -48,9 +73,8 @@ public partial class _Default : System.Web.UI.Page
     }
 
     protected void btnInput2_Click(object sender, EventArgs e)
-    {
-
-        btnInput2.Visible = false;
+    {        
+        btnInput2.Visible = false;               
         initForm();
     }
 }
@@ -60,12 +84,16 @@ public class steppingStone
     public int[,] quantity;
     public int[,] cost;
 
+    public int[] factories;
+    public int[] warehouses;
+    
+
     int rows;
     int columns;
 
     public HtmlTable displayMatrix;
 
-    public steppingStone( int mRows, int mColumns)
+    public steppingStone( int mRows, int mColumns, bool useParameters,int[] argfactories, int[] argwarehouses, int[,] argcosts)
     {
         int matrixRows = mRows;
         int matrixColumns = mColumns;
@@ -79,6 +107,14 @@ public class steppingStone
         initArray(cost);
         initArray(quantity);
 
+        if (useParameters)
+        {
+            factories = argfactories;
+            warehouses = argwarehouses;
+            cost = argcosts;
+        }
+
+        
         displayMatrix = buidMatrix();
         
     }
@@ -220,11 +256,6 @@ public class steppingStone
         return tbl;
     }
 
-    public HtmlTable buildInputMatrix(HtmlTable tbl)
-    {
-
-        return tbl;
-    }
 
     private void initialAllocation()
     {
