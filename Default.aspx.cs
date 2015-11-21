@@ -10,11 +10,48 @@ public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        steppingStone ss = new steppingStone();
-        ss.init();
-        mainDiv.Controls.Add(ss.buidMatrix());
+        if(IsPostBack)
+        {
+            if(btnInput1.Enabled==false)
+            {
+                initForm();
+            }
+        }
+        else
+        {
+            int i = 0;
+        }       
+    }
+
+    void initForm()
+    {
+        int matrixRows, matrixColumns = 0;
+        matrixRows = Convert.ToInt32(txbFactories.Text.ToString());
+        matrixColumns = Convert.ToInt32(txbWarehouses.Text.ToString());
+        steppingStone ss = new steppingStone(matrixRows, matrixColumns);
+        outputDiv1.Controls.AddAt(0, ss.displayMatrix);
                
-        
+    }
+
+    protected void btnInput1_Click(object sender, EventArgs e)
+    {
+        initForm();
+        String scriptText = "";
+        scriptText += "$(document).ready(function () { MakeMatrixEditable(); });";
+        Page.ClientScript.RegisterClientScriptBlock(GetType(), "scriptToCall_MakeMatrixEditable", scriptText, true);
+        btnInput1.Visible = false;
+        btnInput2.Visible = true;
+    }
+    protected void btnReset_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("default.aspx");
+    }
+
+    protected void btnInput2_Click(object sender, EventArgs e)
+    {
+
+        btnInput2.Visible = false;
+        initForm();
     }
 }
 
@@ -26,36 +63,37 @@ public class steppingStone
     int rows;
     int columns;
 
-    public steppingStone()
+    public HtmlTable displayMatrix;
+
+    public steppingStone( int mRows, int mColumns)
     {
-        quantity= new int [3,3];
-        cost = new int[3, 3];
-    }
+        int matrixRows = mRows;
+        int matrixColumns = mColumns;
 
-    public void init()
-    {
-        cost[0, 0] = 5;
-        cost[0, 1] = 4;
-        cost[0, 2] = 3;
-        cost[1, 0] = 8;
-        cost[1, 1] = 4;
-        cost[1, 2] = 3;
-        cost[2, 0] = 9;
-        cost[2, 1] = 7;
-        cost[2, 2] = 5;
-
-        quantity[0, 0] = 100;
-        quantity[0, 1] = 0;
-        quantity[0, 2] = 0;
-        quantity[1, 0] = 200;
-        quantity[1, 1] = 100;
-        quantity[1, 2] = 0;
-        quantity[2, 0] = 0;
-        quantity[2, 1] = 100;
-        quantity[2, 2] = 200;
-
+        quantity = new int[matrixRows, matrixColumns];
+        cost = new int[matrixRows, matrixColumns];
+        
         columns = quantity.GetLength(1);
         rows = quantity.GetLength(0);
+
+        initArray(cost);
+        initArray(quantity);
+
+        displayMatrix = buidMatrix();
+        
+    }
+
+
+    private void initArray(int[,] intArray)
+    {
+       
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                intArray[i, j] = 0;
+            }
+        }        
     }
     
     private int getRowSum(int row)
@@ -92,7 +130,7 @@ public class steppingStone
         return sum;
     }
 
-    public HtmlTable buidMatrix()
+    private HtmlTable buidMatrix()
     {
         HtmlTable tbl = new HtmlTable();
         int rowCount = rows + 2;
@@ -143,11 +181,13 @@ public class steppingStone
                         else
                         {
                             tblCell.InnerText = cost[i - 1, costCol].ToString();
+                            tblCell.Attributes.Add("class", "editable costs");
                         }
                     }
                     if(j+1==columnCount)
                     {
                         tblCell.InnerText = getRowSum(i - 1).ToString();
+                        tblCell.Attributes.Add("class", "editable factories");
                     }
                 }
 
@@ -161,6 +201,7 @@ public class steppingStone
                     if (j > 0 && j + 1 < columnCount && IsOdd(j))
                     {
                         tblCell.InnerText = getColumnSum(quantityCol).ToString();
+                        tblCell.Attributes.Add("class", "editable warehouses");
                     }
                     if (j + 1 == columnCount)
                     {
@@ -177,6 +218,17 @@ public class steppingStone
             tbl.Rows.Add(tblRow);
         }
         return tbl;
+    }
+
+    public HtmlTable buildInputMatrix(HtmlTable tbl)
+    {
+
+        return tbl;
+    }
+
+    private void initialAllocation()
+    {
+
     }
 
     public static bool IsOdd(int value)
