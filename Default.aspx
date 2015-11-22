@@ -1,6 +1,8 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" EnableEventValidation="false" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
 <!DOCTYPE html>
+<link href="css/sweetalert.css" rel="stylesheet" />
+<script src="JavaScript/sweetalert.min.js"></script>
 <script src="JavaScript/jquery-1.11.3.min.js"></script>
 <script src="JavaScript/default.js"></script>
 <link href="css/htmlTableStyle1.css" rel="stylesheet" />

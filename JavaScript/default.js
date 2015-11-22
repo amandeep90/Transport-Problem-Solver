@@ -2,12 +2,12 @@
 {
     if ($("#txbWarehouses").val() > 50 || $("#txbFactories").val() > 50)
     {
-        alert("Maximum upper limit for factories and warehouses is 50");
+        ShowErrorMsg("Upper limit for factories and warehouses is 50", "Okay");
         return false;
     }
-    if ($("#txbWarehouses").val() < 1 || $("#txbFactories").val() < 1)
+    if ($("#txbWarehouses").val() < 2 || $("#txbFactories").val() < 2)
     {
-        alert("Maximum lower limit for factories and warehouses is 1");
+        ShowErrorMsg("Lower limit for factories and warehouses is 2", "Okay");
         return false;
     }
 }
@@ -44,7 +44,7 @@ function validateInput2()
     }
     else
     {
-        alert("You cannot have total warehouse demand different from total factory supply!");
+        ShowErrorMsg("You cannot have total warehouse demand different from total factory supply!", "Okay");
         return false;
     }
     var warehouses = warehousesValues.join(", ");
@@ -63,7 +63,7 @@ function getInput2Values(cssClass)
 $(document).ready(function ()
 {
     AddDigitCheck(".txbDigits");
-
+    
 });
 
 
@@ -98,4 +98,9 @@ function AddDigitCheck(selector)
         }
     });
 
+}
+
+function ShowErrorMsg(msg, buttonText)
+{
+    swal({ title: "Error!", text: msg, type: "error", confirmButtonText: buttonText});
 }
