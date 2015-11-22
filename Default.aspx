@@ -33,6 +33,7 @@
            
         </div>
         <asp:Button runat="server" ID="btnInput2" visible="false" Text ="Submit" OnClick="btnInput2_Click" OnClientClick="return validateInput2();"/>
+        <asp:Button runat="server" ID="btnInput3" visible="false" Text ="Solve" OnClick="btnInput3_Click" OnClientClick="return validateInput3();"/>
         <br />
         <asp:Button runat="server" ID="btnReset" Text ="Reset" OnClick="btnReset_Click" />
         <asp:HiddenField ID="hdnCost" runat ="server" Value="" />

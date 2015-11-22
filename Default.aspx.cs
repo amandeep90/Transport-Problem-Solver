@@ -5,7 +5,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-
+using System.Collections.Generic;
+using System.Linq;
 public partial class _Default : System.Web.UI.Page
 {
     public steppingStone ss;
@@ -34,7 +35,7 @@ public partial class _Default : System.Web.UI.Page
         int[] factories = new int[matrixRows];
         if(!string.IsNullOrEmpty(hdnCost.Value.ToString() ))
         {   
-            //we have user input for matrix pushed into hdn fields  
+            //we have user input for matrix pushed into hdn fields  (on second submit button - after getting user input in matrix for cost and quantities)
             int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
             int intCostCounter = 0;
             for (int i = 0; i < matrixRows; i++)
@@ -51,6 +52,7 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
+            //very first display mode of matrix (on first submit button)
             ss = new steppingStone(matrixRows, matrixColumns, false, factories, warehouses, cost);
         }
         
@@ -74,7 +76,13 @@ public partial class _Default : System.Web.UI.Page
 
     protected void btnInput2_Click(object sender, EventArgs e)
     {        
-        btnInput2.Visible = false;               
+        btnInput2.Visible = false;
+        btnInput3.Visible = true;   
+        initForm();
+    }
+    protected void btnInput3_Click(object sender, EventArgs e)
+    {
+        
         initForm();
     }
 }
@@ -87,6 +95,7 @@ public class steppingStone
     public int[] factories;
     public int[] warehouses;
     
+    public bool hasInputParameters;
 
     int rows;
     int columns;
@@ -107,6 +116,7 @@ public class steppingStone
         initArray(cost);
         initArray(quantity);
 
+        hasInputParameters = useParameters;
         if (useParameters)
         {
             factories = argfactories;
@@ -114,8 +124,8 @@ public class steppingStone
             cost = argcosts;
         }
 
-        
-        displayMatrix = buidMatrix();
+
+        displayMatrix = buidMatrix(useParameters);
         
     }
 
@@ -166,7 +176,9 @@ public class steppingStone
         return sum;
     }
 
-    private HtmlTable buidMatrix()
+    //Builds a html table to represent user input. Quantity array values and cost array values are used.
+    //useInputData arg determines if the table should have total supply for  each factory and total demand by each warehouse based on user input or is based on current array values.
+    private HtmlTable buidMatrix(bool useInputData) 
     {
         HtmlTable tbl = new HtmlTable();
         int rowCount = rows + 2;
@@ -222,8 +234,16 @@ public class steppingStone
                     }
                     if(j+1==columnCount)
                     {
-                        tblCell.InnerText = getRowSum(i - 1).ToString();
-                        tblCell.Attributes.Add("class", "editable factories");
+                        if(useInputData)
+                        {
+                            tblCell.InnerText = factories[i - 1].ToString();
+                        }
+                        else
+                        {
+                            tblCell.InnerText = getRowSum(i - 1).ToString();
+                            tblCell.Attributes.Add("class", "editable factories");
+                        }
+                        
                     }
                 }
 
@@ -236,12 +256,27 @@ public class steppingStone
                     }
                     if (j > 0 && j + 1 < columnCount && IsOdd(j))
                     {
-                        tblCell.InnerText = getColumnSum(quantityCol).ToString();
-                        tblCell.Attributes.Add("class", "editable warehouses");
+                        if(useInputData)
+                        {
+                            tblCell.InnerText = warehouses[quantityCol].ToString();
+                        }
+                        else
+                        {
+                            tblCell.InnerText = getColumnSum(quantityCol).ToString();
+                            tblCell.Attributes.Add("class", "editable warehouses");
+                        }                        
                     }
                     if (j + 1 == columnCount)
                     {
-                        tblCell.InnerText = getSum().ToString();
+                        
+                        if(useInputData)
+                        {
+                            tblCell.InnerText = ((int)(this.warehouses.Sum() + this.factories.Sum())).ToString();
+                        }
+                        else
+                        {
+                            tblCell.InnerText = getSum().ToString();
+                        }
                     }
                 }
 

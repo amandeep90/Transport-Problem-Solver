@@ -1,8 +1,13 @@
 ﻿function validateInput1()
 {
-    ($("#txbWarehouses").val() > 50 || ("#txbFactories").val() > 50)
+    if ($("#txbWarehouses").val() > 50 || $("#txbFactories").val() > 50)
     {
         alert("Maximum upper limit for factories and warehouses is 50");
+        return false;
+    }
+    if ($("#txbWarehouses").val() < 1 || $("#txbFactories").val() < 1)
+    {
+        alert("Maximum lower limit for factories and warehouses is 1");
         return false;
     }
 }
@@ -12,11 +17,36 @@ function validateInput2()
     var costs = costsValues.join(", ");
     $("#hdnCost").val(costs);
 
+    var sumFactory = 0;
+    var sumWarehouse = 0;
+
     var factoriesValues = getInput2Values(".factories");
+
+    for (var i = 0; i < factoriesValues.length; i++) {
+        sumFactory += factoriesValues[i] << 0;
+    }
+    
+    
     var factories = factoriesValues.join(", ");
     $("#hdnFactories").val(factories);
 
+
     var warehousesValues = getInput2Values(".warehouses");
+
+    for (var i = 0; i < warehousesValues.length; i++) {
+        sumWarehouse += warehousesValues[i] << 0;
+    }
+    
+
+    if (sumFactory == sumWarehouse)
+    {
+        //This is a balanced transportation problem;
+    }
+    else
+    {
+        alert("You cannot have total warehouse demand different from total factory supply!");
+        return false;
+    }
     var warehouses = warehousesValues.join(", ");
     $("#hdnWarehouses").val(warehouses);
      
@@ -54,8 +84,17 @@ function AddDigitCheck(selector)
         //if the letter is not digit then display error and don't type anything
         if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
             //display error message
-            $(".errorDigits").html("Digits Only").show().fadeOut("slow");
+            $(".errorDigits").html("Positive Digits Only").show().fadeOut("slow");
             return false;
+        }
+    });
+
+    //called when leaving a textbox
+    $(selector).change(function (e) {
+        //if textbox is empty then put a zero "0"  so we don't get errors        
+        
+        if ($(this).val() == "") {            
+            $(this).val("0");
         }
     });
 
