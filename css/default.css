@@ -1,72 +1,87 @@
-﻿body 
-{
+﻿body {
     margin: 0;
     padding: 0;
+    font-family: Calibri, Candara, Segoe, 'Segoe UI', Optima, Arial, sans-serif;
 }
-.inputDiv1
-{
+
+#mainDiv{
+    margin-left:5px;
+    margin-right:5px;
+    margin-top:5px;
+}
+.inputDiv1 {
     float: left;
     width: 300px;
     background-color: #b0e0e6;
-    border:1px solid red;
+    border: 1px solid red;
 }
 
-.floatRight 
-{
-    float:right;
+.floatRight {
+    float: right;
 }
-.floatLeft
-{
-    float:left;
+
+.floatLeft {
+    float: left;
 }
 
 /*For status div*/
-.statusDiv 
-{
-    text-align:center;   
-    width:100%;
+.statusDiv {
+    text-align: center;
+    width: 100%;
 }
-.errorDigits
-{
+
+.errorDigits {
     color: red;
-    margin:auto auto auto 0;
+    margin: auto auto auto 0;
 }
 
 
 /*For input1 form*/
-label{
-float: left;
-width: 120px;
-font-weight: bold;
+label {
+    float: left;
+    width: 120px;
+    font-weight: bold;
 }
 
-input, textarea{
-width: 180px;
-margin-bottom: 5px;
+input, textarea {
+    width: 180px;
+    margin-bottom: 5px;
 }
 
-textarea{
-width: 250px;
-height: 150px;
+textarea {
+    width: 250px;
+    height: 150px;
 }
 
-.boxes{
-width: 1em;
+.boxes {
+    width: 1em;
 }
 
-#submitbutton{
-margin-left: 120px;
-margin-top: 5px;
-width: 90px;
+#submitbutton {
+    margin-left: 120px;
+    margin-top: 5px;
+    width: 90px;
 }
 
-br{
-clear: left;
+br {
+    clear: left;
 }
 /*input one form ends*/
 
-.txbDigits
-{
-    width:50px;
-    text-align:right;
+.txbDigits {
+    width: 50px;
+    text-align: right;
+}
+
+.stepsDiv {
+        border: brown 1px solid;            
+        border-radius:10px;
+}
+.stepsPara{    
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 20px;
+    margin:3px;
 }

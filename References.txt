@@ -29,3 +29,7 @@ http://stackoverflow.com/questions/16008464/how-to-add-control-to-the-beginning-
 http://superuser.com/questions/256937/how-to-disable-debug-mode-in-google-chrome
 http://stackoverflow.com/questions/1982099/asp-net-dynamically-insert-code-into-head
 http://jsfiddle.net/lesson8/HkEuf/1/
+http://www.codinghelmet.com/?path=exercises/two-smallest
+http://www.dotnetperls.com/clone
+http://stackoverflow.com/questions/5755942/how-do-you-auto-format-code-in-visual-studio
+http://www.cssfontstack.com/calibri

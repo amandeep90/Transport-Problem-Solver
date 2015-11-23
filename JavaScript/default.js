@@ -69,9 +69,9 @@ $(document).ready(function ()
 
 function MakeMatrixEditable()
 {
-    $(".costs").html("<input  type='text' value='0' class='editable costs' >");
-    $(".warehouses").html("<input  type='text' value='0' class='editable warehouses' >");
-    $(".factories").html("<input  type='text' value='0' class='editable factories' >");
+    $(".costs").html("<input  type='text' value='0' class='editable costs txbDigits' >");
+    $(".warehouses").html("<input  type='text' value='0' class='editable warehouses txbDigits' >");
+    $(".factories").html("<input  type='text' value='0' class='editable factories txbDigits' >");
 
     AddDigitCheck(".editable");  
 
