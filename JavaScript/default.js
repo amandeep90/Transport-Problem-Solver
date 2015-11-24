@@ -82,7 +82,9 @@ function validateInput2()
 }
 function validateInput3()
 {
-    
+    var arg = $('#outputDiv1')[0].innerHTML;
+    __doPostBack('btnInput3', arg);
+    return false;
 }
 function getInput2Values(cssClass)
 {

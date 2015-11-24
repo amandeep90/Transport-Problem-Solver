@@ -18,6 +18,7 @@ public partial class _Default : System.Web.UI.Page
         mainDiv.Controls.AddAt(0,new LiteralControl(string.Format(stepHTML, "1. Enter matrix size:")));
         if (IsPostBack)
         {           
+            //Anything we output dynamically to the "outputDiv1" is passed back as markup so it could be redisplayed and won't have to regenerate. 
             string parameter = Request["__EVENTARGUMENT"]; // parameter
             string postSender =  Request["__EVENTTARGET"]; // btnSave
             lastOutput = parameter;
@@ -39,37 +40,28 @@ public partial class _Default : System.Web.UI.Page
         int[] warehouses = new int[matrixColumns];
         int[] factories = new int[matrixRows];
         string matrixID = "Matrix" + matrixNumber;
-        
-        switch (matrixNumber)
+        bool useUserInput = false;
+        if (matrixNumber > 1)
         {
-            case 1:
-                //very first display mode of matrix (on first submit button)
-                ss = new steppingStone(matrixRows, matrixColumns, false, factories, warehouses, cost);    
-                break;
-            case 2:
-                //we have user input for matrix pushed into hdn fields  (on second submit button - after getting user input in matrix for cost and quantities)
-                int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
-                int intCostCounter = 0;
-                for (int i = 0; i < matrixRows; i++)
+            //we have user input for matrix pushed into hdn fields  (on second submit button - after getting user input in matrix for cost and quantities)
+            useUserInput = true;
+            int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
+            int intCostCounter = 0;
+            for (int i = 0; i < matrixRows; i++)
+            {
+                for (int j = 0; j < matrixColumns; j++)
                 {
-                    for (int j = 0; j < matrixColumns; j++)
-                    {
-                        cost[i, j] = intCost[intCostCounter];
-                        intCostCounter = intCostCounter + 1;
-                    }
+                    cost[i, j] = intCost[intCostCounter];
+                    intCostCounter = intCostCounter + 1;
                 }
-                warehouses = Array.ConvertAll(hdnWarehouses.Value.ToString().Split(','), int.Parse);
-                factories = Array.ConvertAll(hdnFactories.Value.ToString().Split(','), int.Parse);
-                ss = new steppingStone(matrixRows, matrixColumns, true, factories, warehouses, cost);
-                outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML, "2. Initialize Matrix:")));
-                break;
-            default:
-                
-                break;
+            }
+            warehouses = Array.ConvertAll(hdnWarehouses.Value.ToString().Split(','), int.Parse);
+            factories = Array.ConvertAll(hdnFactories.Value.ToString().Split(','), int.Parse);         
         }
-        ss.displayMatrix.ID = matrixID;
-        outputDiv1.Controls.Add(ss.displayMatrix);
+        
+        ss = new steppingStone(matrixRows, matrixColumns, useUserInput, factories, warehouses, cost, matrixID);                
     }
+
 
     protected void btnInput1_Click(object sender, EventArgs e)
     {
@@ -77,6 +69,7 @@ public partial class _Default : System.Web.UI.Page
         String scriptText = "";
         scriptText += "$(document).ready(function () { MakeMatrixEditable(); });";
         Page.ClientScript.RegisterClientScriptBlock(GetType(), "scriptToCall_MakeMatrixEditable", scriptText, true);
+        outputDiv1.Controls.Add(ss.buidMatrix(false));
         btnInput1.Visible = false;
         btnInput2.Visible = true;
     }
@@ -89,16 +82,17 @@ public partial class _Default : System.Web.UI.Page
         String scriptText = "";
         scriptText += "$(document).ready(function () { RemoveFirstMatrix(); });";
         Page.ClientScript.RegisterClientScriptBlock(GetType(), "Script for deleting Matrix1", scriptText, true);
+        outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML, "2. Initialize Matrix:")));
         initForm(2);
+        outputDiv1.Controls.Add(ss.buidMatrix(true));
     }
     protected void btnInput3_Click(object sender, EventArgs e)
-    {
-
+    {                
+        outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML,"3. Initial allocation done by using Vogel's Approximation Method: ")));
+        HtmlTable firstSolutionMatrix = new HtmlTable();
         initForm(3);
         ss.initialAllocation(0, 0);
-        outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML,"3. Initial allocation done by using Vogel's Approximation Method: ")));
-        HtmlTable firstSolutionMatrix = new HtmlTable();          
-
+        outputDiv1.Controls.Add(ss.buidMatrix(true));
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {
@@ -124,13 +118,15 @@ public class steppingStone
     int rows;
     int columns;
 
+    string matrixID;
+
     public HtmlTable displayMatrix;
 
-    public steppingStone(int mRows, int mColumns, bool useParameters, int[] argfactories, int[] argwarehouses, int[,] argcosts)
+    public steppingStone(int mRows, int mColumns, bool useParameters, int[] argfactories, int[] argwarehouses, int[,] argcosts,string argMatrixID)
     {
         int matrixRows = mRows;
         int matrixColumns = mColumns;
-
+        matrixID = argMatrixID;
 
         quantity = new int[matrixRows, matrixColumns];
         cost = new int[matrixRows, matrixColumns];
@@ -152,12 +148,7 @@ public class steppingStone
 
             cost = argcosts;
         }
-
-
-        displayMatrix = buidMatrix(useParameters);
-
     }
-
 
     private void initArray(int[,] intArray)
     {
@@ -210,6 +201,7 @@ public class steppingStone
     public HtmlTable buidMatrix(bool useInputData)
     {
         HtmlTable tbl = new HtmlTable();
+        tbl.ID = matrixID;
         int rowCount = rows + 2;
         for (int i = 0; i < rowCount; i++)
         {
