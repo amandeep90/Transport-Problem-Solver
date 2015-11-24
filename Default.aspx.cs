@@ -355,21 +355,23 @@ public class steppingStone
             //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
             if (!supplyExhaustStatus[i])//skip exausted rows
             {
-                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
+                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = false;
+                bool firstDone = false; bool secondDone = false;
                 for (int j = 0; j < columns; j++)
                 {
                     if (!demandExhaustStatus[j])
                     {
-                        if (j == 0)
+                        if (!firstDone)
                         {
                             firstSmallest = cost[i, j];
+                            firstDone = true;
                             //if there is only one column then 
-                            if (columns == j + 1)
-                            {
-                                useSecondSmallest = false;
-                            }
+                            ////if (columns == j + 1 && demandExhaustStatus[j])
+                            ////{
+                            ////    useSecondSmallest = false;
+                            ////}
                         }
-                        else if (j == startCol + 1)
+                        else if (firstDone && !secondDone && !useSecondSmallest)
                         {
                             if (cost[i, j] < firstSmallest)
                             {
@@ -380,6 +382,8 @@ public class steppingStone
                             {
                                 secondSmallest = cost[i, j];
                             }
+                            secondDone = true;
+                            useSecondSmallest = true;
                         }
                         else
                         {
@@ -428,21 +432,23 @@ public class steppingStone
             if (!demandExhaustStatus[i])//skip exausted columns
             {
                 //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
-                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
+                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = false;
+                bool firstDone = false; bool secondDone = false;
                 for (int j = 0; j < rows; j++)
                 {
                     if (!supplyExhaustStatus[j])
                     {
-                        if (j == startRow)
+                        if (!firstDone)
                         {
                             firstSmallest = cost[j, i];
+                            firstDone = true;
                             //if there is only one row then 
-                            if (rows == j + 1)
-                            {
-                                useSecondSmallest = false;
-                            }
+                            //if (rows == j + 1)
+                            //{
+                            //    useSecondSmallest = false;
+                            //}
                         }
-                        else if (j == startRow + 1)
+                        else if(firstDone && !secondDone && !useSecondSmallest)
                         {
                             if (cost[j, i] < firstSmallest)
                             {
@@ -453,6 +459,8 @@ public class steppingStone
                             {
                                 secondSmallest = cost[j, i];
                             }
+                            secondDone = true;
+                            useSecondSmallest = true;
                         }
                         else
                         {
@@ -571,18 +579,16 @@ public class steppingStone
             int availableSupply = currentSupply - currentAllocation;
 
             int allocate = 0, remainingSupply = 0, remainingDemand = 0;
-            if (requiredDemand <= availableSupply)
+            if (requiredDemand < availableSupply)
             {
-                allocate = requiredDemand;
-                remainingSupply = currentSupply - allocate;
-                remainingDemand = currentDemand - allocate;
+                allocate = requiredDemand;     
             }
-            else if (requiredDemand > availableSupply)
+            else if (requiredDemand >= availableSupply)
             {
-                allocate = availableSupply;
-                remainingSupply = currentSupply - allocate;
-                remainingDemand = currentDemand - allocate;
+                allocate = availableSupply;                
             }
+            remainingSupply = currentSupply - allocate;
+            remainingDemand = currentDemand - allocate;
             quantity[allocationRowIndex, allocationColIndex] = allocate;
             currentFactories[allocationRowIndex] = remainingSupply;
             currentWarehouses[allocationColIndex] = remainingDemand;
@@ -595,7 +601,7 @@ public class steppingStone
             {
                 supplyExhaustStatus[startRow] = true;
                 startRow = startRow + 1;
-                startCol=0;
+                //startCol=0;
             }
             callInitialAllocation(startRow, startCol);
         }
@@ -609,7 +615,7 @@ public class steppingStone
         {
             supplyExhaustStatus[startRow] = true;
             startRow = startRow + 1;
-            startCol = 0;
+            //startCol = 0;
             callInitialAllocation(startRow, startCol);
         }
 
