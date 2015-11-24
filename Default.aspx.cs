@@ -95,6 +95,7 @@ public partial class _Default : System.Web.UI.Page
         initForm(3);
         ss.initialAllocation(0, 0);
         outputDiv1.Controls.Add(ss.buidMatrix(true));
+        btnInput3.Visible = true;
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {
@@ -335,7 +336,7 @@ public class steppingStone
     public void initialAllocation(int startRow, int startCol)
     {
         //Using vogel approximation method to do find an inital solution
-
+        bool callAgain = true;
         #region Calculating row differences for cost
         //find rows difference - take two minimum cost values of every row
         int[] rowsDiff = new int[rows - startRow];
@@ -357,8 +358,16 @@ public class steppingStone
                     }
                 }
                 else if (j == startCol + 1)
-                {
-                    secondSmallest = cost[i, j];
+                {                    
+                    if (cost[i, j] < firstSmallest)
+                    {
+                        secondSmallest = firstSmallest;
+                        firstSmallest = cost[i, j];
+                    }
+                    else
+                    {
+                        secondSmallest = cost[i, j];
+                    }
                 }
                 else
                 {
@@ -413,7 +422,15 @@ public class steppingStone
                 }
                 else if (j == startRow + 1)
                 {
-                    secondSmallest = cost[j, i];
+                    if (cost[j, i] < firstSmallest)
+                    {
+                        secondSmallest = firstSmallest;
+                        firstSmallest = cost[j, i];
+                    }
+                    else 
+                    {
+                        secondSmallest = cost[j, i];
+                    }                                      
                 }
                 else
                 {
@@ -455,7 +472,7 @@ public class steppingStone
         int allocationRowIndex, allocationColIndex;
 
         #region use row index at which this value was located and find column in this row that has smallest cost value
-        if (maxRowDiff > maxColDiff)
+        if (maxRowDiff >= maxColDiff)
         {
             int maxRowValueIndex = Array.IndexOf(rowsDiff, maxRowDiff) + startRow;
             int minColumnIndex = 0;
@@ -465,14 +482,14 @@ public class steppingStone
             {
                 if (i == startCol)
                 {
-                    minColValue = cost[i, maxRowValueIndex];
+                    minColValue = cost[maxRowValueIndex, i];
                     minColumnIndex = i;
                 }
                 else
                 {
-                    if (cost[i, maxRowValueIndex] < minColValue)
+                    if (cost[maxRowValueIndex, i] < minColValue)
                     {
-                        minColValue = cost[i, maxRowValueIndex];
+                        minColValue = cost[maxRowValueIndex, i];
                         minColumnIndex = i;
                     }
                 }
@@ -522,7 +539,7 @@ public class steppingStone
 
         int currentAllocation = quantity[allocationRowIndex, allocationColIndex];
 
-        if (currentAllocation < currentDemand && currentSupply > currentAllocation)
+        if (currentAllocation < currentDemand && currentSupply > 0)
         {
             //How much we can allocate
             int requiredDemand = currentDemand - currentAllocation;
@@ -545,22 +562,37 @@ public class steppingStone
             currentFactories[allocationRowIndex] = remainingSupply;
             currentWarehouses[allocationColIndex] = remainingDemand;
             if (remainingDemand == 0)
-            {
-                startCol = startCol + 1;
+            {                 
+                startCol = startCol + 1;   
             }
             if (remainingSupply == 0)
             {
                 startRow = startRow + 1;
+                startCol=0;
             }
-            if (startCol < columns || startRow < rows)
-            {
-                initialAllocation(startRow, startCol);
-            }
-
+            callInitialAllocation(startRow, startCol);
         }
+        else if(currentAllocation == currentDemand)
+        {
+            startCol = startCol + 1;
+            callInitialAllocation(startRow, startCol);
+        }
+        else if (currentSupply == 0)
+        {
+            startRow = startRow + 1;
+            startCol = 0;
+            callInitialAllocation(startRow, startCol);
+        }
+        
         #endregion
     }
-
+    void callInitialAllocation(int startRow,int startCol)
+    {
+        if (startCol < columns && startRow < rows)
+        {
+            initialAllocation(startRow, startCol);
+        }
+    }
     public static bool IsOdd(int value)
     {
         return value % 2 != 0;
