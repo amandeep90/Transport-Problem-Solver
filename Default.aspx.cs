@@ -116,6 +116,9 @@ public class steppingStone
     public int[] currentFactories;
     public int[] currentWarehouses;
 
+    //variables for initial allocation tracking
+    bool[] demandExhaustStatus;
+    bool[] supplyExhaustStatus;
     public bool hasInputParameters;
 
     int rows;
@@ -139,6 +142,11 @@ public class steppingStone
 
         initArray(cost);
         initArray(quantity);
+
+        demandExhaustStatus = new bool[columns];
+        supplyExhaustStatus = new bool[rows];
+        initBoolArray(demandExhaustStatus, false);
+        initBoolArray(supplyExhaustStatus, false);
 
         hasInputParameters = useParameters;
         if (useParameters)
@@ -336,128 +344,145 @@ public class steppingStone
     public void initialAllocation(int startRow, int startCol)
     {
         //Using vogel approximation method to do find an inital solution
-        bool callAgain = true;
+
         #region Calculating row differences for cost
         //find rows difference - take two minimum cost values of every row
-        int[] rowsDiff = new int[rows - startRow];
-
-        for (int i = startRow; i < rows; i++)
+        int rowsNotExausted = supplyExhaustStatus.Where(c => !c).Count();
+        int[] rowsDiff = new int[rowsNotExausted];
+        int rowDiffIndex = 0;
+        for (int i = 0; i < rows; i++)
         {
             //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
-
-            int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
-            for (int j = startCol; j < columns; j++)
+            if (!supplyExhaustStatus[i])//skip exausted rows
             {
-                if (j == startCol)
+                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
+                for (int j = 0; j < columns; j++)
                 {
-                    firstSmallest = cost[i, j];
-                    //if there is only one column then 
-                    if (columns == j + 1)
+                    if (!demandExhaustStatus[j])
                     {
-                        useSecondSmallest = false;
+                        if (j == 0)
+                        {
+                            firstSmallest = cost[i, j];
+                            //if there is only one column then 
+                            if (columns == j + 1)
+                            {
+                                useSecondSmallest = false;
+                            }
+                        }
+                        else if (j == startCol + 1)
+                        {
+                            if (cost[i, j] < firstSmallest)
+                            {
+                                secondSmallest = firstSmallest;
+                                firstSmallest = cost[i, j];
+                            }
+                            else
+                            {
+                                secondSmallest = cost[i, j];
+                            }
+                        }
+                        else
+                        {
+                            if (secondSmallest < firstSmallest)
+                            {
+                                int temp = firstSmallest;
+                                firstSmallest = secondSmallest;
+                                secondSmallest = temp;
+                            }
+
+                            if (cost[i, j] < firstSmallest)
+                            {
+                                secondSmallest = firstSmallest;
+                                firstSmallest = cost[i, j];
+                            }
+                            else if (cost[i, j] < secondSmallest)
+                            {
+                                secondSmallest = cost[i, j];
+                            }
+                        }
                     }
                 }
-                else if (j == startCol + 1)
-                {                    
-                    if (cost[i, j] < firstSmallest)
-                    {
-                        secondSmallest = firstSmallest;
-                        firstSmallest = cost[i, j];
-                    }
-                    else
-                    {
-                        secondSmallest = cost[i, j];
-                    }
+                if (useSecondSmallest)
+                {
+
+                    rowsDiff[rowDiffIndex] = secondSmallest - firstSmallest;
                 }
                 else
                 {
-                    if (secondSmallest < firstSmallest)
-                    {
-                        int temp = firstSmallest;
-                        firstSmallest = secondSmallest;
-                        secondSmallest = temp;
-                    }
-
-                    if (cost[i, j] < firstSmallest)
-                    {
-                        secondSmallest = firstSmallest;
-                        firstSmallest = cost[i, j];
-                    }
-                    else if (cost[i, j] < secondSmallest)
-                    {
-                        secondSmallest = cost[i, j];
-                    }
+                    rowsDiff[rowDiffIndex] = firstSmallest;
                 }
+                rowDiffIndex = rowDiffIndex + 1;
+            }
 
-            }
-            if (useSecondSmallest)
-            {
-                rowsDiff[i - startRow] = secondSmallest - firstSmallest;
-            }
-            else
-            {
-                rowsDiff[i - startRow] = firstSmallest;
-            }
+
         }
         #endregion
 
         #region Calculating column differences for cost
         //find rows difference - take two minimum cost values of every row
-        int[] columnsDiff = new int[columns - startCol];
-
-        for (int i = startCol; i < columns; i++)
+        int colsNotExausted = demandExhaustStatus.Where(c => !c).Count();
+        int[] columnsDiff = new int[colsNotExausted];
+        int colDiffIndex = 0;
+        for (int i = 0; i < columns; i++)
         {
-            //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
-            int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
-            for (int j = startRow; j < rows; j++)
+            if (!demandExhaustStatus[i])//skip exausted columns
             {
-                if (j == startRow)
+                //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
+                int firstSmallest = 0; int secondSmallest = 0; bool useSecondSmallest = true;
+                for (int j = 0; j < rows; j++)
                 {
-                    firstSmallest = cost[j, i];
-                    //if there is only one column then 
-                    if (rows == j + 1)
+                    if (!supplyExhaustStatus[j])
                     {
-                        useSecondSmallest = false;
+                        if (j == startRow)
+                        {
+                            firstSmallest = cost[j, i];
+                            //if there is only one row then 
+                            if (rows == j + 1)
+                            {
+                                useSecondSmallest = false;
+                            }
+                        }
+                        else if (j == startRow + 1)
+                        {
+                            if (cost[j, i] < firstSmallest)
+                            {
+                                secondSmallest = firstSmallest;
+                                firstSmallest = cost[j, i];
+                            }
+                            else
+                            {
+                                secondSmallest = cost[j, i];
+                            }
+                        }
+                        else
+                        {
+                            if (secondSmallest < firstSmallest)
+                            {
+                                int temp = firstSmallest;
+                                firstSmallest = secondSmallest;
+                                secondSmallest = temp;
+                            }
+                            if (cost[j, i] < firstSmallest)
+                            {
+                                secondSmallest = firstSmallest;
+                                firstSmallest = cost[j, i];
+                            }
+                            else if (cost[j, i] < secondSmallest)
+                            {
+                                secondSmallest = cost[j, i];
+                            }
+                        }
                     }
                 }
-                else if (j == startRow + 1)
+                if (useSecondSmallest)
                 {
-                    if (cost[j, i] < firstSmallest)
-                    {
-                        secondSmallest = firstSmallest;
-                        firstSmallest = cost[j, i];
-                    }
-                    else 
-                    {
-                        secondSmallest = cost[j, i];
-                    }                                      
+                    columnsDiff[colDiffIndex] = secondSmallest - firstSmallest;
                 }
                 else
                 {
-                    if (secondSmallest < firstSmallest)
-                    {
-                        int temp = firstSmallest;
-                        firstSmallest = secondSmallest;
-                        secondSmallest = temp;
-                    }
-                    if (cost[j, i] < firstSmallest)
-                    {
-                        secondSmallest = firstSmallest;
-                        firstSmallest = cost[j, i];
-                    }
-                    else if (cost[j, i] < secondSmallest)
-                    {
-                        secondSmallest = cost[j, i];
-                    }
+                    columnsDiff[colDiffIndex] = firstSmallest;
                 }
-            }
-            if (useSecondSmallest)
-            {
-                columnsDiff[i - startCol] = secondSmallest - firstSmallest;
-            }
-            else
-            {
-                columnsDiff[i - startCol] = firstSmallest;
+                colDiffIndex = colDiffIndex + 1;
             }
         }
         #endregion
@@ -562,39 +587,51 @@ public class steppingStone
             currentFactories[allocationRowIndex] = remainingSupply;
             currentWarehouses[allocationColIndex] = remainingDemand;
             if (remainingDemand == 0)
-            {                 
-                startCol = startCol + 1;   
+            {
+                demandExhaustStatus[startCol] = true;
+                startCol = startCol + 1;
             }
             if (remainingSupply == 0)
             {
+                supplyExhaustStatus[startRow] = true;
                 startRow = startRow + 1;
                 startCol=0;
             }
             callInitialAllocation(startRow, startCol);
         }
-        else if(currentAllocation == currentDemand)
+        else if (currentAllocation == currentDemand)
         {
+            demandExhaustStatus[startCol] = true;
             startCol = startCol + 1;
             callInitialAllocation(startRow, startCol);
         }
         else if (currentSupply == 0)
         {
+            supplyExhaustStatus[startRow] = true;
             startRow = startRow + 1;
             startCol = 0;
             callInitialAllocation(startRow, startCol);
         }
-        
+
         #endregion
     }
-    void callInitialAllocation(int startRow,int startCol)
+    void callInitialAllocation(int startRow, int startCol)
     {
         if (startCol < columns && startRow < rows)
         {
             initialAllocation(startRow, startCol);
         }
     }
-    public static bool IsOdd(int value)
+    private  bool IsOdd(int value)
     {
         return value % 2 != 0;
+    }
+
+    private  void initBoolArray(bool[] arr, bool value)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = value;
+        }
     }
 }
