@@ -26,18 +26,16 @@
             <label for="txbFactories">Factories:</label>
             <asp:TextBox ID="txbFactories" runat="server" CssClass ="txbDigits" Text ="3"></asp:TextBox><br />               
 
-            <asp:Button runat="server" ID="btnInput1"  Text ="Submit" OnClick="btnInput1_Click"  OnClientClick="return validateInput1();"/>
+            <asp:Button runat="server" ID="btnInput1" CssClass="buttons"  visible="false" Text ="Submit" OnClick="btnInput1_Click"  OnClientClick="return validateInput1();"/>
             
         </div>
-        <br />
-        <br />
         <div id ="outputDiv1" runat="server" class="matrixStyle1">            
            
         </div>
-        <asp:Button runat="server" ID="btnInput2" visible="false" Text ="Submit" OnClick="btnInput2_Click" OnClientClick="return validateInput2();"/>
-        <asp:Button runat="server" ID="btnInput3" visible="false" Text ="Solve" OnClick="btnInput3_Click" OnClientClick="return validateInput3();"/>
+        <asp:Button CssClass="buttons" runat="server" ID="btnInput2" visible="false" Text ="Submit" OnClick="btnInput2_Click" OnClientClick="return validateInput2();"/>
+        <asp:Button  CssClass="buttons" runat="server" ID="btnInput3" visible="false" Text ="Solve" OnClick="btnInput3_Click" OnClientClick="return validateInput3();"/>
         <br />
-        <asp:Button runat="server" ID="btnReset" Text ="Reset" OnClick="btnReset_Click" />
+        <asp:Button CssClass="buttons" runat="server" ID="btnReset" Text ="Reset" OnClick="btnReset_Click" />
         <asp:HiddenField ID="hdnCost" runat ="server" Value="" />
         <asp:HiddenField ID="hdnFactories" runat ="server" Value="" />
         <asp:HiddenField ID="hdnWarehouses" runat ="server" Value="" />

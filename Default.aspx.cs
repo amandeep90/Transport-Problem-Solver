@@ -11,23 +11,26 @@ public partial class _Default : System.Web.UI.Page
 {
     public steppingStone ss;
     public string stepHTML = "<br/><br/><div class='stepsDiv'><p class='stepsPara'> {0} </p></div><br/><br/>";
+    public string lastOutput;
     protected void Page_Load(object sender, EventArgs e)
     {
+        ClientScript.GetPostBackEventReference(this, string.Empty);
         mainDiv.Controls.AddAt(0,new LiteralControl(string.Format(stepHTML, "1. Enter matrix size:")));
         if (IsPostBack)
-        {
-            if (btnInput1.Enabled == false)
-            {
-                initForm();
-            }
+        {           
+            string parameter = Request["__EVENTARGUMENT"]; // parameter
+            string postSender =  Request["__EVENTTARGET"]; // btnSave
+            lastOutput = parameter;
+            outputDiv1.Controls.Clear();
+            outputDiv1.Controls.Add(new LiteralControl(parameter));
         }
         else
         {
-            int i = 0;
+            btnInput1.Visible = true;
         }
     }
 
-    void initForm()
+    void initForm(int matrixNumber)
     {
         int matrixRows, matrixColumns = 0;
         matrixRows = Convert.ToInt32(txbFactories.Text.ToString());
@@ -35,61 +38,71 @@ public partial class _Default : System.Web.UI.Page
         int[,] cost = new int[matrixRows, matrixColumns];
         int[] warehouses = new int[matrixColumns];
         int[] factories = new int[matrixRows];
-        if (!string.IsNullOrEmpty(hdnCost.Value.ToString()))
+        string matrixID = "Matrix" + matrixNumber;
+        
+        switch (matrixNumber)
         {
-            //we have user input for matrix pushed into hdn fields  (on second submit button - after getting user input in matrix for cost and quantities)
-            int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
-            int intCostCounter = 0;
-            for (int i = 0; i < matrixRows; i++)
-            {
-                for (int j = 0; j < matrixColumns; j++)
+            case 1:
+                //very first display mode of matrix (on first submit button)
+                ss = new steppingStone(matrixRows, matrixColumns, false, factories, warehouses, cost);    
+                break;
+            case 2:
+                //we have user input for matrix pushed into hdn fields  (on second submit button - after getting user input in matrix for cost and quantities)
+                int[] intCost = Array.ConvertAll(hdnCost.Value.ToString().Split(','), int.Parse);
+                int intCostCounter = 0;
+                for (int i = 0; i < matrixRows; i++)
                 {
-                    cost[i, j] = intCost[intCostCounter];
-                    intCostCounter = intCostCounter + 1;
+                    for (int j = 0; j < matrixColumns; j++)
+                    {
+                        cost[i, j] = intCost[intCostCounter];
+                        intCostCounter = intCostCounter + 1;
+                    }
                 }
-            }
-            warehouses = Array.ConvertAll(hdnWarehouses.Value.ToString().Split(','), int.Parse);
-            factories = Array.ConvertAll(hdnFactories.Value.ToString().Split(','), int.Parse);
-            ss = new steppingStone(matrixRows, matrixColumns, true, factories, warehouses, cost);
+                warehouses = Array.ConvertAll(hdnWarehouses.Value.ToString().Split(','), int.Parse);
+                factories = Array.ConvertAll(hdnFactories.Value.ToString().Split(','), int.Parse);
+                ss = new steppingStone(matrixRows, matrixColumns, true, factories, warehouses, cost);
+                outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML, "2. Initialize Matrix:")));
+                break;
+            default:
+                
+                break;
         }
-        else
-        {
-            //very first display mode of matrix (on first submit button)
-            ss = new steppingStone(matrixRows, matrixColumns, false, factories, warehouses, cost);
-        }
-        outputDiv1.Controls.AddAt(0, new LiteralControl(string.Format(stepHTML, "2. Initialize Matrix:")));
-        outputDiv1.Controls.AddAt(1, ss.displayMatrix);
-
+        ss.displayMatrix.ID = matrixID;
+        outputDiv1.Controls.Add(ss.displayMatrix);
     }
 
     protected void btnInput1_Click(object sender, EventArgs e)
     {
-        initForm();
+        initForm(1);
         String scriptText = "";
         scriptText += "$(document).ready(function () { MakeMatrixEditable(); });";
         Page.ClientScript.RegisterClientScriptBlock(GetType(), "scriptToCall_MakeMatrixEditable", scriptText, true);
         btnInput1.Visible = false;
         btnInput2.Visible = true;
     }
-    protected void btnReset_Click(object sender, EventArgs e)
-    {
-        Response.Redirect("default.aspx");
-    }
+
 
     protected void btnInput2_Click(object sender, EventArgs e)
     {
         btnInput2.Visible = false;
         btnInput3.Visible = true;
-        initForm();
+        String scriptText = "";
+        scriptText += "$(document).ready(function () { RemoveFirstMatrix(); });";
+        Page.ClientScript.RegisterClientScriptBlock(GetType(), "Script for deleting Matrix1", scriptText, true);
+        initForm(2);
     }
     protected void btnInput3_Click(object sender, EventArgs e)
     {
 
-        initForm();
+        initForm(3);
         ss.initialAllocation(0, 0);
         outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML,"3. Initial allocation done by using Vogel's Approximation Method: ")));
-        outputDiv1.Controls.Add(ss.buidMatrix(true));
+        HtmlTable firstSolutionMatrix = new HtmlTable();          
 
+    }
+    protected void btnReset_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("default.aspx");
     }
 }
 
@@ -158,35 +171,35 @@ public class steppingStone
         }
     }
 
-    private int getRowSum(int row)
+    private int getRowSum(int row,int[,] array)
     {
         int rowSum = 0;
         for (int i = 0; i < columns; i++)
         {
-            rowSum = rowSum + quantity[row, i];
+            rowSum = rowSum + array[row, i];
         }
 
         return rowSum;
     }
-    private int getColumnSum(int column)
+    private int getColumnSum(int column,int[,] array)
     {
         int columnSum = 0;
         for (int i = 0; i < rows; i++)
         {
-            columnSum = columnSum + quantity[i, column];
+            columnSum = columnSum + array[i, column];
         }
 
         return columnSum;
     }
 
-    private int getSum()
+    private int getSum(int[,] array)
     {
         int sum = 0;
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
             {
-                sum = sum + quantity[i, j];
+                sum = sum + array[i, j];
             }
         }
         return sum;
@@ -234,6 +247,7 @@ public class steppingStone
                     if (j == 0)
                     {
                         tblCell.InnerText = "Factory " + factory;
+                        tblCell.Attributes.Add("class", "factoryCell");
                     }
                     if (j > 0 && j + 1 < columnCount)
                     {
@@ -241,24 +255,30 @@ public class steppingStone
                         {
 
                             tblCell.InnerText = quantity[i - 1, quantityCol].ToString();
+                            if(quantity[i - 1, quantityCol]>0)
+                                tblCell.Attributes.Add("class", "allocatedCell");
+                            else
+                                tblCell.Attributes.Add("class", "unallocatedCell");
                         }
                         else
                         {
                             tblCell.InnerText = cost[i - 1, costCol].ToString();
-                            tblCell.Attributes.Add("class", "editable costs");
+                            tblCell.Attributes.Add("class", "editable costs costCells");
                         }
-                    }
+                    } 
                     if (j + 1 == columnCount)
                     {
                         if (useInputData)
                         {
                             tblCell.InnerText = factories[i - 1].ToString();
+                            tblCell.Attributes.Add("class", "factoryCell");
                         }
                         else
                         {
-                            tblCell.InnerText = getRowSum(i - 1).ToString();
-                            tblCell.Attributes.Add("class", "editable factories");
+                            tblCell.InnerText = getRowSum(i - 1,quantity).ToString();
+                            tblCell.Attributes.Add("class", "editable factories factoryCell");
                         }
+                        
 
                     }
                 }
@@ -269,18 +289,26 @@ public class steppingStone
                     if (j == 0)
                     {
                         tblCell.InnerText = "Warehouse Requirements";
+                        tblCell.Attributes.Add("class", "warehousCell");
                     }
                     if (j > 0 && j + 1 < columnCount && IsOdd(j))
                     {
                         if (useInputData)
                         {
                             tblCell.InnerText = warehouses[quantityCol].ToString();
+                            tblCell.Attributes.Add("class", "warehousCell");
                         }
                         else
                         {
-                            tblCell.InnerText = getColumnSum(quantityCol).ToString();
-                            tblCell.Attributes.Add("class", "editable warehouses");
+                            tblCell.InnerText = getColumnSum(quantityCol,quantity).ToString();
+                            tblCell.Attributes.Add("class", "editable warehouses warehousCell");
                         }
+                        
+                    }
+                    else if ((j > 0 && j + 1 < columnCount && !IsOdd(j)))
+                    {
+                        tblCell.Attributes.Add("class", "costCells");
+                        tblCell.InnerText = getColumnSum(costCol,cost ).ToString();
                     }
                     if (j + 1 == columnCount)
                     {
@@ -291,8 +319,9 @@ public class steppingStone
                         }
                         else
                         {
-                            tblCell.InnerText = getSum().ToString();
+                            tblCell.InnerText = getSum(quantity).ToString();
                         }
+                        tblCell.Attributes.Add("class", "grandTotalCell");
                     }
                 }
 

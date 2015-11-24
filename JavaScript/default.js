@@ -1,15 +1,22 @@
 ﻿function validateInput1()
 {
+    var valid = true;
     if ($("#txbWarehouses").val() > 50 || $("#txbFactories").val() > 50)
     {
         ShowErrorMsg("Upper limit for factories and warehouses is 50", "Okay");
-        return false;
+        valid = false;
     }
     if ($("#txbWarehouses").val() < 2 || $("#txbFactories").val() < 2)
     {
         ShowErrorMsg("Lower limit for factories and warehouses is 2", "Okay");
-        return false;
+        valid = false;
     }
+    if(valid)
+    {
+        var arg = $('#outputDiv1')[0].innerHTML;
+        __doPostBack('btnInput1', arg);
+    }
+    return false;
 }
 function validateInput2()
 {
@@ -49,7 +56,33 @@ function validateInput2()
     }
     var warehouses = warehousesValues.join(", ");
     $("#hdnWarehouses").val(warehouses);
-     
+
+
+    var table = $("#Matrix1");
+    var inputs = $(table).find('input[value="0"][type="text"]');
+    var validated = true;
+    $(inputs).each(function () {
+        var $this = jQuery(this);
+        if ($this.val() === '0') {
+            ShowErrorMsg("Please make sure that you have entered a positive value in every cell", "Okay");
+            $this.css("background-color", "red");
+            validated = false;
+        }
+        else {
+            $this.css("background-color", "white");
+        }
+    });    
+    if (validated) {
+
+
+        var arg = $('#outputDiv1')[0].innerHTML;
+        __doPostBack('btnInput2', arg);
+    }
+    return false;   
+}
+function validateInput3()
+{
+    
 }
 function getInput2Values(cssClass)
 {
@@ -97,6 +130,12 @@ function AddDigitCheck(selector)
             $(this).val("0");
         }
     });
+
+}
+
+function RemoveFirstMatrix ()
+{
+    $('#Matrix1').fadeOut(1000, function () { $(this).remove(); });
 
 }
 
