@@ -1,10 +1,12 @@
 ﻿.matrixStyle1 {
-	margin:0px;padding:0px;
-	width:100%;	
-	border-bottom:1px solid #000000;
-}   
- .matrixStyle1 table {
-        border-spacing: 8px;       
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    border-bottom: 1px solid #000000;
+}
+
+    .matrixStyle1 table {
+        border-spacing: 8px;
         width: 100%;
         height: 100%;
         margin-left: 5px;
@@ -14,79 +16,95 @@
         margin-bottom: 20px;
     }
 
-.matrixStyle1 td{
-	vertical-align:middle;		
-	text-align:center;
-	padding:7px;
-	font-size:22px;
-	font-weight:normal;
-    border-radius:50px;
-	
+    .matrixStyle1 td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 7px;
+        font-size: 22px;
+        font-weight: normal;
+        border-radius: 50px;
+    }
+
+.headerCell {
+    background: -o-linear-gradient(bottom, #ff5656 5%, #40003F 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #BF01BE), color-stop(1, #40003F) );
+    background: -moz-linear-gradient( center top, #BF01BE 5%, #40003F 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#BF01BE", endColorstr="#40003F");
+    background: -o-linear-gradient(top,#BF01BE,40003F);
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
 }
-.matrixStyle1 tr:first-child td{
-	background:-o-linear-gradient(bottom, #ff5656 5%, #40003F 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #BF01BE), color-stop(1, #40003F) );
-	background:-moz-linear-gradient( center top, #BF01BE 5%, #40003F 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#BF01BE", endColorstr="#40003F");	background: -o-linear-gradient(top,#BF01BE,40003F);
-	text-align:center;
-	font-size:20px;
-	font-weight:bold;
-	color:#ffffff;
-}
-.matrixStyle1 tr:hover td{
+/*.matrixStyle1 tr:hover td{
 	background:-o-linear-gradient(bottom, #ff5656 5%, #7f0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff5656), color-stop(1, #7f0000) );
 	background:-moz-linear-gradient( center top, #ff5656 5%, #7f0000 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff5656", endColorstr="#7f0000");	background: -o-linear-gradient(top,#ff5656,7f0000);
 	background-color:#ff5656;
-}
+}*/
 
 
 /*Matrix cells colors*/
-.allocatedCell{
-    background:-o-linear-gradient(bottom, #ffffff 5%, #EC304A 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #EC304A) ); 
-    background:-moz-linear-gradient( center top, #ffffff 5%, #EC304A 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#EC304A");	
+.allocatedCell {
+    background: -o-linear-gradient(bottom, #ffffff 5%, #EC304A 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #EC304A) );
+    background: -moz-linear-gradient( center top, #ffffff 5%, #EC304A 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#EC304A");
     background: -o-linear-gradient(top,#ffffff,#EC304A);
-    font-weight:bold;
+    font-weight: bold;
 }
-.unallocatedCell{
-    background:-o-linear-gradient(bottom, #ffffff 5%, #D37EF0 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #D37EF0) ); 
-    background:-moz-linear-gradient( center top, #ffffff 5%, #D37EF0 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#D37EF0");	
+
+.unallocatedCell {
+    background: -o-linear-gradient(bottom, #ffffff 5%, #D37EF0 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #D37EF0) );
+    background: -moz-linear-gradient( center top, #ffffff 5%, #D37EF0 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#D37EF0");
     background: -o-linear-gradient(top,#ffffff,#D37EF0);
-    font-weight:bold;
+    font-weight: bold;
 }
-.costCells{
-    background:-o-linear-gradient(bottom, #ffffff 5%, #DD65CF 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #DD65CF) ); 
-    background:-moz-linear-gradient( center top, #ffffff 5%, #DD65CF 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#DD65CF");	
+
+.costCells {
+    background: -o-linear-gradient(bottom, #ffffff 5%, #DD65CF 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #DD65CF) );
+    background: -moz-linear-gradient( center top, #ffffff 5%, #DD65CF 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#DD65CF");
     background: -o-linear-gradient(top,#ffffff,#DD65CF);
-    font-weight:bold;
+    font-weight: bold;
 }
-.factoryCell{
-    background:-o-linear-gradient(bottom, #ffffff 5%, #E501E4 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #E501E4) ); 
-    background:-moz-linear-gradient( center top, #ffffff 5%, #E501E4 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#E501E4");	
+
+.factoryCell {
+    background: -o-linear-gradient(bottom, #ffffff 5%, #E501E4 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #E501E4) );
+    background: -moz-linear-gradient( center top, #ffffff 5%, #E501E4 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#E501E4");
     background: -o-linear-gradient(top,#ffffff,#E501E4);
-    font-weight:bold;
+    font-weight: bold;
 }
-.warehousCell{
-    background:-o-linear-gradient(bottom, #ffffff 5%, #401742 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #401742) ); 
-    background:-moz-linear-gradient( center top, #ffffff 5%, #401742 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#401742");	
+
+.warehousCell {
+    background: -o-linear-gradient(bottom, #ffffff 5%, #401742 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #401742) );
+    background: -moz-linear-gradient( center top, #ffffff 5%, #401742 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#401742");
     background: -o-linear-gradient(top,#ffffff,#401742);
-    font-weight:bold;
+    font-weight: bold;
 }
-.grandTotalCell{
-    background:-o-linear-gradient(bottom, #401742 5%, #D37EF0 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #401742), color-stop(1, #D37EF0) ); 
-    background:-moz-linear-gradient( center top, #401742 5%, #D37EF0 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#401742", endColorstr="#D37EF0");	
+
+.grandTotalCell {
+    background: -o-linear-gradient(bottom, #401742 5%, #D37EF0 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #401742), color-stop(1, #D37EF0) );
+    background: -moz-linear-gradient( center top, #401742 5%, #D37EF0 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#401742", endColorstr="#D37EF0");
     background: -o-linear-gradient(top,#401742,#D37EF0);
-    font-size:20px;
-    font-weight:bolder;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.quanitityCellHover {
+    background: -o-linear-gradient(bottom, #ff5656 5%, #7f0000 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff5656), color-stop(1, #7f0000) );
+    background: -moz-linear-gradient( center top, #ff5656 5%, #7f0000 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff5656", endColorstr="#7f0000");
+    background: -o-linear-gradient(top,#ff5656,7f0000);
+    background-color: #ff5656;
 }

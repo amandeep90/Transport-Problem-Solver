@@ -4,11 +4,12 @@
     font-family: Calibri, Candara, Segoe, 'Segoe UI', Optima, Arial, sans-serif;
 }
 
-#mainDiv{
-    margin-left:5px;
-    margin-right:5px;
-    margin-top:5px;
+#mainDiv {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
 }
+
 .inputDiv1 {
     float: left;
     width: 300px;
@@ -71,39 +72,47 @@ br {
 .txbDigits {
     width: 50px;
     text-align: center;
-    font-size:18px;
+    font-size: 18px;
 }
 
 .stepsDiv {
-        border: brown 2px solid;            
-        border-radius:10px;
-}
-.stepsPara{    
-	font-size: 28px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 400;
-	line-height: 26px;
-    margin:3px;
-}
-.buttons{
-    background:-o-linear-gradient(bottom, black 5%, #401742 100%);	
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, black), color-stop(1, #401742) ); 
-    background:-moz-linear-gradient( center top, black 5%, #401742 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="black", endColorstr="#401742");	
-    background: -o-linear-gradient(top,black,#401742);
-    font-size:16px;
-    border-radius:10px;
-    border:1px dotted white;
-    color:white;
-    margin-top:5px;
-    margin-bottom:5px;
-    padding:8px;
-}
-.buttons:hover{
-    background:-o-linear-gradient(bottom, #ff5656 5%, #7f0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff5656), color-stop(1, #7f0000) );
-	background:-moz-linear-gradient( center top, #ff5656 5%, #7f0000 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff5656", endColorstr="#7f0000");	background: -o-linear-gradient(top,#ff5656,7f0000);
-	background-color:#ff5656;
+    border: brown 2px solid;
+    border-radius: 10px;
 }
 
+.stepsPara {
+    font-size: 28px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 26px;
+    margin: 3px;
+}
+
+.buttons {
+    background: -o-linear-gradient(bottom, black 5%, #401742 100%);
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, black), color-stop(1, #401742) );
+    background: -moz-linear-gradient( center top, black 5%, #401742 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="black", endColorstr="#401742");
+    background: -o-linear-gradient(top,black,#401742);
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px dotted white;
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 8px;
+}
+
+    .buttons:hover {
+        background: -o-linear-gradient(bottom, #ff5656 5%, #7f0000 100%);
+        background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff5656), color-stop(1, #7f0000) );
+        background: -moz-linear-gradient( center top, #ff5656 5%, #7f0000 100% );
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff5656", endColorstr="#7f0000");
+        background: -o-linear-gradient(top,#ff5656,7f0000);
+        background-color: #ff5656;
+    }
+
+    .label1{
+        font-size:20px;
+    }

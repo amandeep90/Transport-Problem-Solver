@@ -13,33 +13,32 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div id ="mainDiv" runat="server" class="mainDiv">
-        <div id="statusDiv" class="statusDiv">
-            <span id="errorDigits1" class="errorDigits"></span>
+        <div id="mainDiv" runat="server" class="mainDiv">
+            <div id="statusDiv" class="statusDiv">
+                <span id="errorDigits1" class="errorDigits"></span>
 
-        </div>
-         
-        <div id="inputDiv1" runat="server" class="">
-            <label for="txbWarehouses">Warehouses</label>
-            <asp:TextBox ID="txbWarehouses" runat="server" CssClass ="txbDigits" Text ="3"></asp:TextBox><br />
+            </div>
 
-            <label for="txbFactories">Factories:</label>
-            <asp:TextBox ID="txbFactories" runat="server" CssClass ="txbDigits" Text ="3"></asp:TextBox><br />               
+            <div id="inputDiv1" runat="server" class="">
+                <label class="label1" for="txbWarehouses">Warehouses</label>
+                <asp:TextBox ID="txbWarehouses" runat="server" CssClass="txbDigits" Text="3"></asp:TextBox><br />
 
-            <asp:Button runat="server" ID="btnInput1" CssClass="buttons"  visible="false" Text ="Submit" OnClick="btnInput1_Click"  OnClientClick="return validateInput1();"/>
-            
+                <label class="label1" for="txbFactories">Factories:</label>
+                <asp:TextBox ID="txbFactories" runat="server" CssClass="txbDigits" Text="3"></asp:TextBox><br />
+
+                <asp:Button runat="server" ID="btnInput1" CssClass="buttons" Visible="false" Text="Submit" OnClick="btnInput1_Click" OnClientClick="return validateInput1();" />
+
+            </div>
+            <div id="outputDiv1" runat="server" class="matrixStyle1">
+            </div>
+            <asp:Button CssClass="buttons" runat="server" ID="btnInput2" Visible="false" Text="Submit" OnClick="btnInput2_Click" OnClientClick="return validateInput2();" />
+            <asp:Button CssClass="buttons" runat="server" ID="btnInput3" Visible="false" Text="Solve" OnClick="btnInput3_Click" OnClientClick="return validateInput3();" />
+            <br />
+            <asp:Button CssClass="buttons" runat="server" ID="btnReset" Text="Reset" OnClick="btnReset_Click" />
+            <asp:HiddenField ID="hdnCost" runat="server" Value="" />
+            <asp:HiddenField ID="hdnFactories" runat="server" Value="" />
+            <asp:HiddenField ID="hdnWarehouses" runat="server" Value="" />
         </div>
-        <div id ="outputDiv1" runat="server" class="matrixStyle1">            
-           
-        </div>
-        <asp:Button CssClass="buttons" runat="server" ID="btnInput2" visible="false" Text ="Submit" OnClick="btnInput2_Click" OnClientClick="return validateInput2();"/>
-        <asp:Button  CssClass="buttons" runat="server" ID="btnInput3" visible="false" Text ="Solve" OnClick="btnInput3_Click" OnClientClick="return validateInput3();"/>
-        <br />
-        <asp:Button CssClass="buttons" runat="server" ID="btnReset" Text ="Reset" OnClick="btnReset_Click" />
-        <asp:HiddenField ID="hdnCost" runat ="server" Value="" />
-        <asp:HiddenField ID="hdnFactories" runat ="server" Value="" />
-        <asp:HiddenField ID="hdnWarehouses" runat ="server" Value="" />
-    </div>
     </form>
 </body>
 </html>

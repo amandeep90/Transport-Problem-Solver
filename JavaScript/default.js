@@ -1,25 +1,20 @@
-﻿function validateInput1()
-{
+﻿function validateInput1() {
     var valid = true;
-    if ($("#txbWarehouses").val() > 50 || $("#txbFactories").val() > 50)
-    {
+    if ($("#txbWarehouses").val() > 50 || $("#txbFactories").val() > 50) {
         ShowErrorMsg("Upper limit for factories and warehouses is 50", "Okay");
         valid = false;
     }
-    if ($("#txbWarehouses").val() < 2 || $("#txbFactories").val() < 2)
-    {
+    if ($("#txbWarehouses").val() < 2 || $("#txbFactories").val() < 2) {
         ShowErrorMsg("Lower limit for factories and warehouses is 2", "Okay");
         valid = false;
     }
-    if(valid)
-    {
+    if (valid) {
         var arg = $('#outputDiv1')[0].innerHTML;
         __doPostBack('btnInput1', arg);
     }
     return false;
 }
-function validateInput2()
-{
+function validateInput2() {
     var costsValues = getInput2Values(".costs");
     var costs = costsValues.join(", ");
     $("#hdnCost").val(costs);
@@ -32,8 +27,8 @@ function validateInput2()
     for (var i = 0; i < factoriesValues.length; i++) {
         sumFactory += factoriesValues[i] << 0;
     }
-    
-    
+
+
     var factories = factoriesValues.join(", ");
     $("#hdnFactories").val(factories);
 
@@ -43,14 +38,12 @@ function validateInput2()
     for (var i = 0; i < warehousesValues.length; i++) {
         sumWarehouse += warehousesValues[i] << 0;
     }
-    
 
-    if (sumFactory == sumWarehouse)
-    {
+
+    if (sumFactory == sumWarehouse) {
         //This is a balanced transportation problem;
     }
-    else
-    {
+    else {
         ShowErrorMsg("You cannot have total warehouse demand different from total factory supply!", "Okay");
         return false;
     }
@@ -71,23 +64,21 @@ function validateInput2()
         else {
             $this.css("background-color", "white");
         }
-    });    
+    });
     if (validated) {
 
 
         var arg = $('#outputDiv1')[0].innerHTML;
         __doPostBack('btnInput2', arg);
     }
-    return false;   
+    return false;
 }
-function validateInput3()
-{
+function validateInput3() {
     var arg = $('#outputDiv1')[0].innerHTML;
     __doPostBack('btnInput3', arg);
     return false;
 }
-function getInput2Values(cssClass)
-{
+function getInput2Values(cssClass) {
     var values = [];
     $("input" + cssClass + "").each(function () {
         values.push($(this).val()); // this is the value of each textbox 
@@ -95,25 +86,43 @@ function getInput2Values(cssClass)
     return values;
 }
 
-$(document).ready(function ()
-{
+$(document).ready(function () {
     AddDigitCheck(".txbDigits");
-    
+    var selector = "[id^=Matrix]";
+    $(selector).on("mouseover", 'td', function () {
+
+        if ($(this).hasClass("unallocatedCell") || $(this).hasClass("allocatedCell")) {
+            QuantityCellHoverToggle(this);
+
+        }
+    });
+    $(selector).on("mouseleave", 'td', function () {
+
+        if ($(this).hasClass("unallocatedCell") || $(this).hasClass("allocatedCell")) {
+            QuantityCellHoverToggle(this);
+        }
+    });
 });
 
+function QuantityCellHoverToggle(e) {
+    $(e).siblings(':first').toggleClass('quanitityCellHover');
+    $(e).siblings(':last').toggleClass('quanitityCellHover');
+    $(e).parent().siblings(':first').children().eq((($(e).index() + 1) / 2)).toggleClass('quanitityCellHover headerCell');
+    $(e).parent().siblings(':first').children(':last').toggleClass('quanitityCellHover headerCell');
+    $(e).parent().siblings(':last').children().eq($(e).index()).toggleClass('quanitityCellHover');
+    $(e).parent().siblings(':last').children().eq($(e).index()).siblings(':first').toggleClass('quanitityCellHover');
+    $(e).toggleClass('quanitityCellHover');
+}
 
-function MakeMatrixEditable()
-{
+
+function MakeMatrixEditable() {
     $(".costs").html("<input  type='text' value='0' class='editable costs txbDigits' >");
     $(".warehouses").html("<input  type='text' value='0' class='editable warehouses txbDigits' >");
     $(".factories").html("<input  type='text' value='0' class='editable factories txbDigits' >");
-
-    AddDigitCheck(".editable");  
-
+    AddDigitCheck(".editable");
 }
 
-function AddDigitCheck(selector)
-{
+function AddDigitCheck(selector) {
     //called when key is pressed in textbox
     $(selector).keypress(function (e) {
         //if the letter is not digit then display error and don't type anything
@@ -127,21 +136,19 @@ function AddDigitCheck(selector)
     //called when leaving a textbox
     $(selector).change(function (e) {
         //if textbox is empty then put a zero "0"  so we don't get errors        
-        
-        if ($(this).val() == "") {            
+
+        if ($(this).val() == "") {
             $(this).val("0");
         }
     });
 
 }
 
-function RemoveFirstMatrix ()
-{
+function RemoveFirstMatrix() {
     $('#Matrix1').fadeOut(1000, function () { $(this).remove(); });
 
 }
 
-function ShowErrorMsg(msg, buttonText)
-{
-    swal({ title: "Error!", text: msg, type: "error", confirmButtonText: buttonText});
+function ShowErrorMsg(msg, buttonText) {
+    swal({ title: "Error!", text: msg, type: "error", confirmButtonText: buttonText });
 }
