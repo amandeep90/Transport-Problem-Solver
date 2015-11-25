@@ -5,8 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using System.Collections.Generic;
-using System.Linq;
+
 public partial class _Default : System.Web.UI.Page
 {
     public steppingStone ss;
@@ -88,12 +87,13 @@ public partial class _Default : System.Web.UI.Page
         initForm(2);
         outputDiv1.Controls.Add(ss.buidMatrix(true));
     }
+
     protected void btnInput3_Click(object sender, EventArgs e)
     {
         outputDiv1.Controls.Add(new LiteralControl(string.Format(stepHTML, "3. Initial allocation done by using Vogel's Approximation Method: ")));
         HtmlTable firstSolutionMatrix = new HtmlTable();
         initForm(3);
-        ss.initialAllocation(0, 0);
+        ss.initialAllocation();
         outputDiv1.Controls.Add(ss.buidMatrix(true));
         btnInput3.Visible = true;
     }
@@ -341,15 +341,18 @@ public class steppingStone
     }
 
 
-    public void initialAllocation(int startRow, int startCol)
+    public void initialAllocation()
     {
+
         //Using vogel approximation method to do find an inital solution
+        int allocationRowIndex = -1;
+        int allocationColIndex = -1;
+        bool recall = true;
 
         #region Calculating row differences for cost
         //find rows difference - take two minimum cost values of every row
-        int rowsNotExausted = supplyExhaustStatus.Where(c => !c).Count();
-        int[] rowsDiff = new int[rowsNotExausted];
-        int rowDiffIndex = 0;
+
+        int?[] rowsDiff = new int?[rows];
         for (int i = 0; i < rows; i++)
         {
             //firstSmallest variable holds the smallest cost value and secondSmallest holds the next to smallest cost value
@@ -365,11 +368,6 @@ public class steppingStone
                         {
                             firstSmallest = cost[i, j];
                             firstDone = true;
-                            //if there is only one column then 
-                            ////if (columns == j + 1 && demandExhaustStatus[j])
-                            ////{
-                            ////    useSecondSmallest = false;
-                            ////}
                         }
                         else if (firstDone && !secondDone && !useSecondSmallest)
                         {
@@ -409,24 +407,24 @@ public class steppingStone
                 if (useSecondSmallest)
                 {
 
-                    rowsDiff[rowDiffIndex] = secondSmallest - firstSmallest;
+                    rowsDiff[i] = secondSmallest - firstSmallest;
                 }
                 else
                 {
-                    rowsDiff[rowDiffIndex] = firstSmallest;
+                    rowsDiff[i] = firstSmallest;
                 }
-                rowDiffIndex = rowDiffIndex + 1;
             }
-
-
+            else
+            {
+                rowsDiff[i] = null;
+            }
         }
         #endregion
 
         #region Calculating column differences for cost
         //find rows difference - take two minimum cost values of every row
-        int colsNotExausted = demandExhaustStatus.Where(c => !c).Count();
-        int[] columnsDiff = new int[colsNotExausted];
-        int colDiffIndex = 0;
+
+        int?[] columnsDiff = new int?[columns];
         for (int i = 0; i < columns; i++)
         {
             if (!demandExhaustStatus[i])//skip exausted columns
@@ -442,13 +440,8 @@ public class steppingStone
                         {
                             firstSmallest = cost[j, i];
                             firstDone = true;
-                            //if there is only one row then 
-                            //if (rows == j + 1)
-                            //{
-                            //    useSecondSmallest = false;
-                            //}
                         }
-                        else if(firstDone && !secondDone && !useSecondSmallest)
+                        else if (firstDone && !secondDone && !useSecondSmallest)
                         {
                             if (cost[j, i] < firstSmallest)
                             {
@@ -484,43 +477,45 @@ public class steppingStone
                 }
                 if (useSecondSmallest)
                 {
-                    columnsDiff[colDiffIndex] = secondSmallest - firstSmallest;
+                    columnsDiff[i] = secondSmallest - firstSmallest;
                 }
                 else
                 {
-                    columnsDiff[colDiffIndex] = firstSmallest;
+                    columnsDiff[i] = firstSmallest;
                 }
-                colDiffIndex = colDiffIndex + 1;
+            }
+            else
+            {
+                columnsDiff[i] = null;
             }
         }
         #endregion
 
         //Finding max value in row difference array
-        int maxRowDiff = rowsDiff.Max();
-
+        int? maxRowDiff = rowsDiff.Max();
 
         //Finding max value in col difference array
-        int maxColDiff = columnsDiff.Max();
-
-        int allocationRowIndex, allocationColIndex;
+        int? maxColDiff = columnsDiff.Max();
 
         #region use row index at which this value was located and find column in this row that has smallest cost value
         if (maxRowDiff >= maxColDiff)
         {
-            int maxRowValueIndex = Array.IndexOf(rowsDiff, maxRowDiff) + startRow;
+            int maxRowValueIndex = Array.IndexOf(rowsDiff, maxRowDiff);
             int minColumnIndex = 0;
 
             int minColValue = 0;
-            for (int i = startCol; i < columns; i++)
+            bool firstDone = false;
+            for (int i = 0; i < columns; i++)
             {
-                if (i == startCol)
+                if (!demandExhaustStatus[i])
                 {
-                    minColValue = cost[maxRowValueIndex, i];
-                    minColumnIndex = i;
-                }
-                else
-                {
-                    if (cost[maxRowValueIndex, i] < minColValue)
+                    if (!firstDone)
+                    {
+                        minColValue = cost[maxRowValueIndex, i];
+                        minColumnIndex = i;
+                        firstDone = true;
+                    }
+                    else if (cost[maxRowValueIndex, i] < minColValue)
                     {
                         minColValue = cost[maxRowValueIndex, i];
                         minColumnIndex = i;
@@ -535,22 +530,23 @@ public class steppingStone
         #region use col index at which this value was located and find row in this column that has smallest cost value
         else
         {
-            int maxColValueIndex = Array.IndexOf(columnsDiff, maxColDiff) + startCol;
+            int maxColValueIndex = Array.IndexOf(columnsDiff, maxColDiff);
             int minRowsIndex = 0;
 
             int minRowValue = 0;
-            for (int i = startRow; i < rows; i++)
+            bool firstDone = false;
+            for (int i = 0; i < rows; i++)
             {
-                if (i == startRow)
+                if (!supplyExhaustStatus[i])
                 {
-                    minRowValue = cost[i, maxColValueIndex];
-                    minRowsIndex = i;
-                }
-                else
-                {
-                    if (cost[i, maxColValueIndex] < minRowValue)
+                    if (!firstDone)
                     {
-
+                        minRowValue = cost[i, maxColValueIndex];
+                        minRowsIndex = i;
+                        firstDone = true;
+                    }
+                    else if (cost[i, maxColValueIndex] < minRowValue)
+                    {
                         minRowValue = cost[i, maxColValueIndex];
                         minRowsIndex = i;
                     }
@@ -581,11 +577,11 @@ public class steppingStone
             int allocate = 0, remainingSupply = 0, remainingDemand = 0;
             if (requiredDemand < availableSupply)
             {
-                allocate = requiredDemand;     
+                allocate = requiredDemand;
             }
             else if (requiredDemand >= availableSupply)
             {
-                allocate = availableSupply;                
+                allocate = availableSupply;
             }
             remainingSupply = currentSupply - allocate;
             remainingDemand = currentDemand - allocate;
@@ -594,46 +590,44 @@ public class steppingStone
             currentWarehouses[allocationColIndex] = remainingDemand;
             if (remainingDemand == 0)
             {
-                demandExhaustStatus[startCol] = true;
-                startCol = startCol + 1;
+                demandExhaustStatus[allocationColIndex] = true;
             }
             if (remainingSupply == 0)
             {
-                supplyExhaustStatus[startRow] = true;
-                startRow = startRow + 1;
-                //startCol=0;
+                supplyExhaustStatus[allocationRowIndex] = true;
             }
-            callInitialAllocation(startRow, startCol);
         }
         else if (currentAllocation == currentDemand)
         {
-            demandExhaustStatus[startCol] = true;
-            startCol = startCol + 1;
-            callInitialAllocation(startRow, startCol);
+            //don't allocate
+            demandExhaustStatus[allocationColIndex] = true;
         }
         else if (currentSupply == 0)
         {
-            supplyExhaustStatus[startRow] = true;
-            startRow = startRow + 1;
-            //startCol = 0;
-            callInitialAllocation(startRow, startCol);
+            supplyExhaustStatus[allocationRowIndex] = true;
         }
 
         #endregion
-    }
-    void callInitialAllocation(int startRow, int startCol)
-    {
-        if (startCol < columns && startRow < rows)
+
+        #region When to terminate recursion call
+        if (getSum(quantity) == factories.Sum())
         {
-            initialAllocation(startRow, startCol);
+            recall = false;
         }
+
+        if (recall)
+        {
+            initialAllocation();
+        }
+        #endregion
     }
-    private  bool IsOdd(int value)
+
+    private bool IsOdd(int value)
     {
         return value % 2 != 0;
     }
 
-    private  void initBoolArray(bool[] arr, bool value)
+    private void initBoolArray(bool[] arr, bool value)
     {
         for (int i = 0; i < arr.Length; i++)
         {
